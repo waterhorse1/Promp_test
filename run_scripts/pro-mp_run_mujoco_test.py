@@ -35,10 +35,28 @@ def main(config):
             hidden_sizes=config['hidden_sizes'],
         )
 
-    sampler = MetaSampler(
+    pg_sampler = MetaSampler(
         env=env,
         policy=policy,
-        rollouts_per_meta_task=config['rollouts_per_meta_task']+config['pg_rollouts_per_meta_task'],  # This batch_size is confusing
+        rollouts_per_meta_task=config['pg_rollouts_per_meta_task'],  # This batch_size is confusing
+        meta_batch_size=config['meta_batch_size'],
+        max_path_length=config['max_path_length'],
+        parallel=config['parallel'],
+    )
+    
+    H_sampler = MetaSampler(
+        env=env,
+        policy=policy,
+        rollouts_per_meta_task=config['h_rollouts_per_meta_task'],  # This batch_size is confusing
+        meta_batch_size=config['meta_batch_size'],
+        max_path_length=config['max_path_length'],
+        parallel=config['parallel'],
+    )
+    
+    outer_sampler = MetaSampler(
+        env=env,
+        policy=policy,
+        rollouts_per_meta_task=config['outer_rollouts_per_meta_task'],  # This batch_size is confusing
         meta_batch_size=config['meta_batch_size'],
         max_path_length=config['max_path_length'],
         parallel=config['parallel'],
@@ -68,11 +86,12 @@ def main(config):
         algo=algo,
         policy=policy,
         env=env,
-        sampler=sampler,
         sample_processor=sample_processor,
         n_itr=config['n_itr'],
         num_inner_grad_steps=config['num_inner_grad_steps'],
-        pathnum1=config['pg_rollouts_per_meta_task'],
+        pg_sampler=pg_sampler,
+        h_sampler=H_sampler,
+        outer_sampler=outer_sampler,
     )
 
     trainer.train()
@@ -101,8 +120,9 @@ if __name__=="__main__":
             'env': 'HalfCheetahRandDirecEnv',
 
             # sampler config
-            'rollouts_per_meta_task': 20,
-            'pg_rollouts_per_meta_task': 10,
+            'h_rollouts_per_meta_task': 20,
+            'pg_rollouts_per_meta_task': 20,
+            'outer_rollouts_per_meta_task': 20,
             'max_path_length': 100,
             'parallel': True,
 

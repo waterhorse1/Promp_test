@@ -55,6 +55,11 @@ class MetaSampler(Sampler):
         tasks = self.env.sample_tasks(self.meta_batch_size)
         assert len(tasks) == self.meta_batch_size
         self.vec_env.set_tasks(tasks)
+        return tasks
+    
+    def set_tasks(self, tasks):
+        assert len(tasks) == self.meta_batch_size
+        self.vec_env.set_tasks(tasks)
 
     def obtain_samples(self, log=False, log_prefix=''):
         """

@@ -4,7 +4,7 @@ from meta_policy_search.envs.normalized_env import normalize
 from meta_policy_search.meta_algos.pro_mp_test import ProMP_test
 from meta_policy_search.meta_trainer_double import Trainer
 from meta_policy_search.samplers.meta_sampler import MetaSampler
-from meta_policy_search.samplers.meta_sample_processor import MetaSampleProcessor2
+from meta_policy_search.samplers.meta_sample_processor import MetaSampleProcessor
 from meta_policy_search.policies.meta_gaussian_mlp_policy import MetaGaussianMLPPolicy
 from meta_policy_search.utils import logger
 from meta_policy_search.utils.utils import set_seed, ClassEncoder
@@ -62,7 +62,7 @@ def main(config):
         parallel=config['parallel'],
     )
 
-    sample_processor = MetaSampleProcessor2(
+    sample_processor = MetaSampleProcessor(
         baseline=baseline,
         discount=config['discount'],
         gae_lambda=config['gae_lambda'],

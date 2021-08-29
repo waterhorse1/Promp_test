@@ -60,11 +60,6 @@ class Trainer(object):
         self.sess = sess
         self.h_sampler = h_sampler
         self.outer_sampler = outer_sampler
-        if h_sampler is None:
-            self.h_sampler = pg_sampler
-            
-        if outer_sampler is None:
-            self.outer_sampler = pg_sampler
 
     def train(self):
         """
@@ -91,9 +86,9 @@ class Trainer(object):
                 logger.log("\n ---------------- Iteration %d ----------------" % itr)
                 logger.log("Sampling set of tasks/goals for this meta-batch...")
 
-                self.pg_sampler.update_tasks()
-                self.h_sampler.update_tasks()
-                self.outer_sampler.update_tasks()
+                tasks = self.pg_sampler.update_tasks()
+                self.h_sampler.set_tasks(tasks)
+                self.outer_sampler.set_tasks(tasks)
                 self.policy.switch_to_pre_update()  # Switch to pre-update policy
 
                 all_samples_data, all_paths = [], []
